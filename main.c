@@ -8,8 +8,6 @@
 #include <stdbool.h>
 
 #define STACK_SIZE 256
-#define sp (registers[SP])
-#define ip (registers[IP])
 bool running = true;
 
 // ALU values
@@ -19,13 +17,19 @@ int valB = 0;
 // Program Stack
 int stack[STACK_SIZE];
 
+// Stack pointer
+int sp = -1;
+
+// Program counter
+int ip = 0;
+
 
 typedef enum {
-	PSH;
-	POP;
-	ADD;
-	SET;
-	HLT;	
+	PSH,
+	POP,
+	ADD,
+	SET,
+	HLT,	
 } InstructionSet;
 
 typedef enum
@@ -43,15 +47,6 @@ const int program [] = {
 };
 
 
-int main() {
-	while (running) {
-		int cur_ins = fetch();
-		if (cur_ins == HLT) running = false;
-		ip++;
-	}
-	return 0;
-}
-
 int fetch() {
 	return program[ip];
 }
@@ -59,10 +54,12 @@ int fetch() {
 void eval(int cur_ins) {
 	switch (cur_ins) {
 		case HLT:
+			printf("Halting...\n");
 			running = false;
 			break;
 		case PSH:
 			stack[++sp] = program[++ip];
+			printf("Pushing %d\n", program[ip]);
 			break;
 		case POP:
 			printf("Popped %d\n", stack[sp--]);
@@ -73,5 +70,14 @@ void eval(int cur_ins) {
 			stack[++sp] = valA + valB;
 			break;
 	}
+}
+
+int main() {
+	while (running) {
+		int cur_ins = fetch();
+		if (cur_ins == HLT) running = false;
+		ip++;
+	}
+	return 0;
 }
 
