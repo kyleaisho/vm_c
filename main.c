@@ -75,7 +75,7 @@ void eval(int cur_ins) {
 int main() {
 	while (running) {
 		int cur_ins = fetch();
-		if (cur_ins == HLT) running = false;
+		eval(cur_ins);
 		ip++;
 	}
 	return 0;
